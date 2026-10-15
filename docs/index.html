@@ -3,95 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
-<title>Dólar hoy en Colombia (TRM): $3.197,65</title>
-<meta name="description" content="TRM del dólar hoy en Colombia: $3.197,65 COP. Conversor de dólares a pesos e historial reciente.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Utilidades Colombia: herramientas de consulta diaria</title>
+<meta name="description" content="Herramientas gratuitas de consulta diaria para Colombia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Crect width='32' height='32' rx='8'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect width='32' height='16' fill='%23fcd116'/%3E%3Crect y='16' width='32' height='8' fill='%23003893'/%3E%3Crect y='24' width='32' height='8' fill='%23ce1126'/%3E%3C/g%3E%3C/svg%3E">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--text:#1b1f24;--muted:#5d6672;--line:#e3e6ea;--accent:#0b6bcb;--up:#c0392b;--down:#1e8e5a}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1318;--card:#171d24;--text:#e8ecf1;--muted:#9aa5b1;--line:#27303a;--accent:#5aa9ff;--up:#ff7b6b;--down:#4cd08c}}
+
+:root{
+--bg:#fbf8f1;--card:#ffffff;--text:#171a21;--muted:#5f6673;--line:#e8e2d4;
+--accent:#1a3fa6;--on-accent:#ffffff;--hl:#fcd116;--up:#c0262d;--down:#12804f;
+--tint:rgba(26,63,166,.09);--shadow:0 1px 2px rgba(23,26,33,.05),0 10px 28px rgba(23,26,33,.07);
+--hero-a:#1a3fa6;--hero-b:#0c2672}
+@media (prefers-color-scheme:dark){:root{
+--bg:#0d1015;--card:#151a21;--text:#eef1f5;--muted:#9aa4b2;--line:#252c36;
+--accent:#7aa2ff;--on-accent:#0b1220;--up:#ff7b6b;--down:#4cd08c;
+--tint:rgba(122,162,255,.12);--shadow:none;--hero-a:#1d3f94;--hero-b:#10275f}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
-.wrap{max-width:720px;margin:0 auto;padding:1rem}
-h1{font-size:clamp(1.4rem,5vw,2rem);margin:.5rem 0 .25rem}
-h2{font-size:clamp(1.1rem,4vw,1.35rem);margin:0 0 .75rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1rem;margin-top:1rem}
-.valor{font-size:clamp(2rem,10vw,3.2rem);font-weight:800;line-height:1.1;overflow-wrap:anywhere}
-.muted{color:var(--muted);font-size:.9rem;margin:0}
-.cambio{font-weight:600;margin-top:.25rem}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;line-height:1.55;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:1.25rem 1rem}
+h1{font-size:clamp(1.7rem,6vw,2.6rem);line-height:1.1;letter-spacing:-.025em;font-weight:800;margin:.5rem 0}
+h2{font-size:clamp(1.05rem,3.6vw,1.25rem);letter-spacing:-.01em;font-weight:700;margin:0 0 .75rem}
+.top{background:var(--card);border-bottom:1px solid var(--line)}
+.top::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#fcd116 0 50%,#003893 50% 75%,#ce1126 75%)}
+.top .wrap{padding-top:.75rem;padding-bottom:.75rem}
+@media(min-width:560px){.top{position:sticky;top:0;z-index:10}}
+.marca{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.01em;font-size:1.05rem;color:var(--text);text-decoration:none}
+.logo{width:26px;height:26px;border-radius:8px;flex:none;background:linear-gradient(#fcd116 0 50%,#003893 50% 75%,#ce1126 75%)}
+nav{display:flex;gap:.5rem;overflow-x:auto;margin-top:.65rem;padding-bottom:.2rem;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{white-space:nowrap;padding:.5rem .95rem;border:1px solid var(--line);border-radius:999px;color:var(--text);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;font-weight:600}
+nav a[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.1rem;margin-top:1rem;box-shadow:var(--shadow)}
+.muted{color:var(--muted);font-size:.92rem;margin:0}
+.nota{margin-top:.75rem}
 .sube{color:var(--up)}
 .baja{color:var(--down)}
+.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));border:0;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(252,209,22,.22)}
+.hero>*{position:relative;z-index:1}
+.hero .muted{color:rgba(255,255,255,.82)}
+.hero .valor{color:#fff;letter-spacing:-.03em}
+.hero .cambio{display:inline-block;margin-top:.5rem;padding:.25rem .7rem;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font-size:.92rem}
 .conv{display:grid;gap:.75rem}
 @media(min-width:560px){.conv{grid-template-columns:1fr 1fr}}
-label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.25rem}
-input{width:100%;font-size:1.2rem;padding:.75rem;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);min-height:48px}
-input:focus{outline:2px solid var(--accent);outline-offset:1px}
-.nota{margin-top:.75rem}
-svg{width:100%;height:auto;display:block}
-.line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
-.area{fill:var(--accent);opacity:.12}
-.dot{fill:var(--accent)}
-.lbl{fill:var(--muted);font-size:11px}
-.tw{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th,td{padding:.6rem .4rem;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
-th:not(:first-child),td:not(:first-child){text-align:right}
-footer{margin:1.5rem 0 2rem}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.25rem;font-weight:600}
+input,select{width:100%;font-size:1.2rem;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);min-height:48px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+input:focus-visible,select:focus-visible{border-radius:12px}
+.eyebrow{display:inline-block;margin:0;padding:.25rem .7rem;border-radius:999px;background:var(--tint);color:var(--accent);font-weight:700;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+.lead{font-size:1.05rem;color:var(--muted);margin:.25rem 0 0;max-width:52ch}
+.resalta{background:linear-gradient(transparent 62%,var(--hl) 62% 92%,transparent 92%);padding:0 .1em}
+.hero-home{padding:1rem 0 .25rem}
+.grid{display:grid;gap:1rem;margin-top:1rem}
+@media(min-width:560px){.grid{grid-template-columns:1fr 1fr}}
+.grid .card{margin-top:0}
+.tool{display:flex;flex-direction:column}
+.tool h2{margin:.7rem 0 .25rem}
+.ico{width:44px;height:44px;border-radius:12px;background:var(--tint);color:var(--accent);display:grid;place-items:center}
+.ico svg{width:24px;height:24px}
+.badge{display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem;margin-top:.9rem;padding-top:.8rem;border-top:1px dashed var(--line)}
+.badge strong{font-size:1.5rem;letter-spacing:-.02em}
+.chip{font-size:.8rem;font-weight:700;padding:.1rem .55rem;border-radius:999px;background:var(--tint)}
+.enlace{color:inherit;text-decoration:none;transition:transform .15s ease,border-color .15s ease}
+.enlace:hover{border-color:var(--accent);transform:translateY(-2px)}
+.soon{opacity:.7;border-style:dashed;box-shadow:none}
+.tag{align-self:flex-start;margin-top:.8rem;font-size:.75rem;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+@media(prefers-reduced-motion:reduce){.enlace{transition:none}.enlace:hover{transform:none}}
+.pie{margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line)}
+
+
 </style>
 </head>
 <body>
+<div class="top"><div class="wrap">
+<a class="marca" href="./"><span class="logo" aria-hidden="true"></span>Utilidades Colombia</a>
+<nav><a href="./" aria-current="page">Inicio</a><a href="dolar/">Dólar hoy</a></nav>
+</div></div>
 <div class="wrap">
-<header>
-<h1>Dólar hoy en Colombia</h1>
-<p class="muted">Vigente del 15/10/2026 al 15/10/2026</p>
-</header>
 <main>
-<section class="card">
-<div class="muted">TRM (pesos por 1 dólar)</div>
-<div class="valor">$3.197,65</div>
-<div class="cambio sube">▲ +15,91 (0,50%) frente a la TRM anterior</div>
-</section>
 
-<section class="card">
-<h2>Conversor</h2>
-<div class="conv">
-<div><label for="usd">Dólares (USD)</label><input id="usd" inputmode="decimal" autocomplete="off" placeholder="100"></div>
-<div><label for="cop">Pesos (COP)</label><input id="cop" inputmode="decimal" autocomplete="off" placeholder="319.444"></div>
-</div>
-<p class="muted nota">Calculado con la TRM vigente. Bancos y casas de cambio pueden aplicar otro valor.</p>
+<section class="hero-home">
+<p class="eyebrow">Colombia · cada día</p>
+<h1>Lo que necesitas saber hoy, <span class="resalta">sin vueltas</span>.</h1>
+<p class="lead">Herramientas gratuitas de consulta diaria, hechas para usarse desde el celular.</p>
 </section>
+<div class="grid"><a class="tool card enlace" href="dolar/"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M17 6.5c0-1.9-2.2-3-5-3S7 4.7 7 6.8c0 4.4 10 2.4 10 6.9 0 2.1-2.2 3.5-5 3.5s-5-1.1-5-3.2"/></svg></div><h2>Dólar hoy</h2><p class="muted">TRM del dólar en Colombia, conversor de dólares a pesos e historial.</p><div class="badge"><span class="muted">TRM hoy</span><strong>$3.197,65</strong><span class="chip sube">▲ +0,50%</span></div></a><div class="tool card soon"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 9v6"/></svg></div><h2>Calculadora de notas</h2><p class="muted">Calcula cuánto necesitas en el próximo corte para pasar.</p><span class="tag">Próximamente</span></div><div class="tool card soon"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16v-4l2-5h12l2 5v4z"/><path d="M4 12h16"/><circle cx="8" cy="17.5" r="1.8"/><circle cx="16" cy="17.5" r="1.8"/></svg></div><h2>Pico y placa</h2><p class="muted">Consulta la restricción de hoy en tu ciudad.</p><span class="tag">Próximamente</span></div></div>
 
-<section class="card">
-<h2>Evolución reciente</h2>
-<svg viewBox="0 0 360 180" role="img" aria-label="Gráfica de la TRM de las últimas 30 fechas"><polygon class="area" points="10.0,152 10.0,101.2 21.7,121.0 33.4,120.6 45.2,127.6 56.9,131.9 68.6,139.6 80.3,138.9 92.1,152.0 103.8,135.2 115.5,139.2 127.2,126.5 139.0,115.9 150.7,97.2 162.4,97.4 174.1,90.0 185.9,64.7 197.6,35.1 209.3,45.4 221.0,26.0 232.8,29.8 244.5,42.7 256.2,45.0 267.9,60.6 279.7,89.5 291.4,86.7 303.1,76.3 314.8,85.5 326.6,96.5 338.3,102.3 350.0,95.0 350.0,152"/><polyline class="line" points="10.0,101.2 21.7,121.0 33.4,120.6 45.2,127.6 56.9,131.9 68.6,139.6 80.3,138.9 92.1,152.0 103.8,135.2 115.5,139.2 127.2,126.5 139.0,115.9 150.7,97.2 162.4,97.4 174.1,90.0 185.9,64.7 197.6,35.1 209.3,45.4 221.0,26.0 232.8,29.8 244.5,42.7 256.2,45.0 267.9,60.6 279.7,89.5 291.4,86.7 303.1,76.3 314.8,85.5 326.6,96.5 338.3,102.3 350.0,95.0"/><circle class="dot" cx="350.0" cy="95.0" r="4"/><text class="lbl" x="10" y="14">Máx $3.349,63</text><text class="lbl" x="350" y="14" text-anchor="end">Mín $3.072,27</text><text class="lbl" x="10" y="172">02/09/2026</text><text class="lbl" x="350" y="172" text-anchor="end">15/10/2026</text></svg>
-</section>
-
-<section class="card">
-<h2>Historial</h2>
-<div class="tw"><table>
-<tr><th>Fecha</th><th>TRM</th><th>Cambio</th></tr>
-<tr><td>15/10/2026</td><td>$3.197,65</td><td class="sube">▲ +15,91</td></tr><tr><td>14/10/2026</td><td>$3.181,74</td><td class="baja">▼ -12,70</td></tr><tr><td>10/10/2026</td><td>$3.194,44</td><td class="baja">▼ -24,31</td></tr><tr><td>09/10/2026</td><td>$3.218,75</td><td class="baja">▼ -20,13</td></tr><tr><td>08/10/2026</td><td>$3.238,88</td><td class="sube">▲ +22,87</td></tr><tr><td>07/10/2026</td><td>$3.216,01</td><td class="sube">▲ +6,23</td></tr><tr><td>06/10/2026</td><td>$3.209,78</td><td class="baja">▼ -63,71</td></tr><tr><td>03/10/2026</td><td>$3.273,49</td><td class="baja">▼ -34,24</td></tr><tr><td>02/10/2026</td><td>$3.307,73</td><td class="baja">▼ -5,11</td></tr><tr><td>01/10/2026</td><td>$3.312,84</td><td class="baja">▼ -28,39</td></tr><tr><td>30/09/2026</td><td>$3.341,23</td><td class="baja">▼ -8,40</td></tr><tr><td>29/09/2026</td><td>$3.349,63</td><td class="sube">▲ +42,77</td></tr><tr><td>26/09/2026</td><td>$3.306,86</td><td class="baja">▼ -22,75</td></tr><tr><td>25/09/2026</td><td>$3.329,61</td><td class="sube">▲ +65,22</td></tr><tr><td>24/09/2026</td><td>$3.264,39</td><td class="sube">▲ +55,73</td></tr><tr><td>23/09/2026</td><td>$3.208,66</td><td class="sube">▲ +16,13</td></tr><tr><td>22/09/2026</td><td>$3.192,53</td><td class="baja">▼ -0,39</td></tr><tr><td>19/09/2026</td><td>$3.192,92</td><td class="sube">▲ +41,19</td></tr><tr><td>18/09/2026</td><td>$3.151,73</td><td class="sube">▲ +23,27</td></tr><tr><td>17/09/2026</td><td>$3.128,46</td><td class="sube">▲ +28,01</td></tr><tr><td>16/09/2026</td><td>$3.100,45</td><td class="baja">▼ -8,85</td></tr><tr><td>15/09/2026</td><td>$3.109,30</td><td class="sube">▲ +37,03</td></tr><tr><td>12/09/2026</td><td>$3.072,27</td><td class="baja">▼ -28,73</td></tr><tr><td>11/09/2026</td><td>$3.101,00</td><td class="sube">▲ +1,52</td></tr><tr><td>10/09/2026</td><td>$3.099,48</td><td class="baja">▼ -16,99</td></tr><tr><td>09/09/2026</td><td>$3.116,47</td><td class="baja">▼ -9,61</td></tr><tr><td>05/09/2026</td><td>$3.126,08</td><td class="baja">▼ -15,28</td></tr><tr><td>04/09/2026</td><td>$3.141,36</td><td class="sube">▲ +0,81</td></tr><tr><td>03/09/2026</td><td>$3.140,55</td><td class="baja">▼ -43,45</td></tr><tr><td>02/09/2026</td><td>$3.184,00</td><td class="baja">▼ -29,97</td></tr>
-</table></div>
-</section>
 </main>
-<footer class="muted">Fuente: Superintendencia Financiera de Colombia (datos.gov.co). Actualizado: 2026-10-15 12:21 UTC.</footer>
+<footer class="pie muted">Información con fines informativos. Actualizado: 2026-10-15 20:12 UTC.</footer>
 </div>
-<script>
-(function(){
-var TRM=3197.65;
-var usd=document.getElementById("usd"),cop=document.getElementById("cop");
-var nf=new Intl.NumberFormat("es-CO",{maximumFractionDigits:2});
-function num(s,esCop){
-  s=s.trim();
-  if(esCop){s=s.split(".").join("");}
-  else if(s.indexOf(",")>-1||s.split(".").length>2){s=s.split(".").join("");}
-  s=s.replace(",",".");
-  var n=parseFloat(s);
-  return isFinite(n)&&n>=0?n:null;
-}
-usd.addEventListener("input",function(){var n=num(usd.value,false);cop.value=n===null?"":nf.format(n*TRM);});
-cop.addEventListener("input",function(){var n=num(cop.value,true);usd.value=n===null?"":nf.format(n/TRM);});
-})();
-</script>
+
 </body>
 </html>

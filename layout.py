@@ -1,0 +1,132 @@
+from datetime import datetime, timezone
+from html import escape
+
+NOMBRE_SITIO = "Utilidades Colombia"  # nombre provisional
+
+FAVICON = (
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+    "%3Cdefs%3E%3CclipPath id='c'%3E%3Crect width='32' height='32' rx='8'/%3E%3C/clipPath%3E%3C/defs%3E"
+    "%3Cg clip-path='url(%23c)'%3E%3Crect width='32' height='16' fill='%23fcd116'/%3E"
+    "%3Crect y='16' width='32' height='8' fill='%23003893'/%3E"
+    "%3Crect y='24' width='32' height='8' fill='%23ce1126'/%3E%3C/g%3E%3C/svg%3E"
+)
+
+ICONOS = {
+    "dolar": '<path d="M12 2v20"/><path d="M17 6.5c0-1.9-2.2-3-5-3S7 4.7 7 6.8c0 4.4 10 2.4 10 6.9 0 2.1-2.2 3.5-5 3.5s-5-1.1-5-3.2"/>',
+    "notas": '<path d="M22 9 12 4 2 9l10 5z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5"/><path d="M22 9v6"/>',
+    "pico-y-placa": '<path d="M4 16v-4l2-5h12l2 5v4z"/><path d="M4 12h16"/><circle cx="8" cy="17.5" r="1.8"/><circle cx="16" cy="17.5" r="1.8"/>',
+}
+ICONO_DEFECTO = '<circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/>'
+
+
+def icono(slug):
+    return (
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+        f"{ICONOS.get(slug, ICONO_DEFECTO)}</svg>"
+    )
+
+
+CSS = """
+:root{
+--bg:#fbf8f1;--card:#ffffff;--text:#171a21;--muted:#5f6673;--line:#e8e2d4;
+--accent:#1a3fa6;--on-accent:#ffffff;--hl:#fcd116;--up:#c0262d;--down:#12804f;
+--tint:rgba(26,63,166,.09);--shadow:0 1px 2px rgba(23,26,33,.05),0 10px 28px rgba(23,26,33,.07);
+--hero-a:#1a3fa6;--hero-b:#0c2672}
+@media (prefers-color-scheme:dark){:root{
+--bg:#0d1015;--card:#151a21;--text:#eef1f5;--muted:#9aa4b2;--line:#252c36;
+--accent:#7aa2ff;--on-accent:#0b1220;--up:#ff7b6b;--down:#4cd08c;
+--tint:rgba(122,162,255,.12);--shadow:none;--hero-a:#1d3f94;--hero-b:#10275f}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;line-height:1.55;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:1.25rem 1rem}
+h1{font-size:clamp(1.7rem,6vw,2.6rem);line-height:1.1;letter-spacing:-.025em;font-weight:800;margin:.5rem 0}
+h2{font-size:clamp(1.05rem,3.6vw,1.25rem);letter-spacing:-.01em;font-weight:700;margin:0 0 .75rem}
+.top{background:var(--card);border-bottom:1px solid var(--line)}
+.top::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#fcd116 0 50%,#003893 50% 75%,#ce1126 75%)}
+.top .wrap{padding-top:.75rem;padding-bottom:.75rem}
+@media(min-width:560px){.top{position:sticky;top:0;z-index:10}}
+.marca{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.01em;font-size:1.05rem;color:var(--text);text-decoration:none}
+.logo{width:26px;height:26px;border-radius:8px;flex:none;background:linear-gradient(#fcd116 0 50%,#003893 50% 75%,#ce1126 75%)}
+nav{display:flex;gap:.5rem;overflow-x:auto;margin-top:.65rem;padding-bottom:.2rem;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{white-space:nowrap;padding:.5rem .95rem;border:1px solid var(--line);border-radius:999px;color:var(--text);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;font-weight:600}
+nav a[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.1rem;margin-top:1rem;box-shadow:var(--shadow)}
+.muted{color:var(--muted);font-size:.92rem;margin:0}
+.nota{margin-top:.75rem}
+.sube{color:var(--up)}
+.baja{color:var(--down)}
+.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));border:0;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(252,209,22,.22)}
+.hero>*{position:relative;z-index:1}
+.hero .muted{color:rgba(255,255,255,.82)}
+.hero .valor{color:#fff;letter-spacing:-.03em}
+.hero .cambio{display:inline-block;margin-top:.5rem;padding:.25rem .7rem;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font-size:.92rem}
+.conv{display:grid;gap:.75rem}
+@media(min-width:560px){.conv{grid-template-columns:1fr 1fr}}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.25rem;font-weight:600}
+input,select{width:100%;font-size:1.2rem;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);min-height:48px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+input:focus-visible,select:focus-visible{border-radius:12px}
+.eyebrow{display:inline-block;margin:0;padding:.25rem .7rem;border-radius:999px;background:var(--tint);color:var(--accent);font-weight:700;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+.lead{font-size:1.05rem;color:var(--muted);margin:.25rem 0 0;max-width:52ch}
+.resalta{background:linear-gradient(transparent 62%,var(--hl) 62% 92%,transparent 92%);padding:0 .1em}
+.hero-home{padding:1rem 0 .25rem}
+.grid{display:grid;gap:1rem;margin-top:1rem}
+@media(min-width:560px){.grid{grid-template-columns:1fr 1fr}}
+.grid .card{margin-top:0}
+.tool{display:flex;flex-direction:column}
+.tool h2{margin:.7rem 0 .25rem}
+.ico{width:44px;height:44px;border-radius:12px;background:var(--tint);color:var(--accent);display:grid;place-items:center}
+.ico svg{width:24px;height:24px}
+.badge{display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem;margin-top:.9rem;padding-top:.8rem;border-top:1px dashed var(--line)}
+.badge strong{font-size:1.5rem;letter-spacing:-.02em}
+.chip{font-size:.8rem;font-weight:700;padding:.1rem .55rem;border-radius:999px;background:var(--tint)}
+.enlace{color:inherit;text-decoration:none;transition:transform .15s ease,border-color .15s ease}
+.enlace:hover{border-color:var(--accent);transform:translateY(-2px)}
+.soon{opacity:.7;border-style:dashed;box-shadow:none}
+.tag{align-self:flex-start;margin-top:.8rem;font-size:.75rem;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+@media(prefers-reduced-motion:reduce){.enlace{transition:none}.enlace:hover{transform:none}}
+.pie{margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line)}
+"""
+
+
+def render(*, titulo, descripcion, cuerpo, raiz, menu, activa="", css="", js=""):
+    inicio = raiz or "./"
+    actual = ' aria-current="page"' if activa == "" else ""
+    enlaces = f'<a href="{inicio}"{actual}>Inicio</a>'
+    for slug, etiqueta in menu:
+        actual = ' aria-current="page"' if slug == activa else ""
+        enlaces += f'<a href="{raiz}{slug}/"{actual}>{escape(etiqueta)}</a>'
+    script = f"<script>\n{js}\n</script>" if js else ""
+    ahora = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+    return f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>{escape(titulo)}</title>
+<meta name="description" content="{escape(descripcion, quote=True)}">
+<link rel="icon" href="{FAVICON}">
+<style>
+{CSS}
+{css}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+<a class="marca" href="{inicio}"><span class="logo" aria-hidden="true"></span>{escape(NOMBRE_SITIO)}</a>
+<nav>{enlaces}</nav>
+</div></div>
+<div class="wrap">
+<main>
+{cuerpo}
+</main>
+<footer class="pie muted">Información con fines informativos. Actualizado: {ahora} UTC.</footer>
+</div>
+{script}
+</body>
+</html>"""
