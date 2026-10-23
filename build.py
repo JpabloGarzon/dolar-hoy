@@ -2,14 +2,14 @@ import os
 from html import escape
 
 import layout
-from paginas import dolar
+from paginas import dolar, notas
 
-PAGINAS = [dolar]  # aquí se irán sumando las páginas nuevas
+PAGINAS = [dolar, notas] # aquí se irán sumando las páginas nuevas
 
 # Tarjetas "Próximamente" solo para mostrar la visión del sitio.
 # Bórralas (deja la lista vacía) antes de pedir publicidad.
 PROXIMAMENTE = [
-    ("notas", "Calculadora de notas", "Calcula cuánto necesitas en el próximo corte para pasar."),
+    
     ("pico-y-placa", "Pico y placa", "Consulta la restricción de hoy en tu ciudad."),
 ]
 
