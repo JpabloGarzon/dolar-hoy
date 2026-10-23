@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Calculadora de notas</title>
+<meta name="description" content="Calcula la nota que necesitas en el último corte para aprobar tu materia.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Crect width='32' height='32' rx='8'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect width='32' height='16' fill='%23fcd116'/%3E%3Crect y='16' width='32' height='8' fill='%23003893'/%3E%3Crect y='24' width='32' height='8' fill='%23ce1126'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+
+:root{
+--bg:#fbf8f1;--card:#ffffff;--text:#171a21;--muted:#5f6673;--line:#e8e2d4;
+--accent:#1a3fa6;--on-accent:#ffffff;--hl:#fcd116;--up:#c0262d;--down:#12804f;
+--tint:rgba(26,63,166,.09);--shadow:0 1px 2px rgba(23,26,33,.05),0 10px 28px rgba(23,26,33,.07);
+--hero-a:#1a3fa6;--hero-b:#0c2672}
+@media (prefers-color-scheme:dark){:root{
+--bg:#0d1015;--card:#151a21;--text:#eef1f5;--muted:#9aa4b2;--line:#252c36;
+--accent:#7aa2ff;--on-accent:#0b1220;--up:#ff7b6b;--down:#4cd08c;
+--tint:rgba(122,162,255,.12);--shadow:none;--hero-a:#1d3f94;--hero-b:#10275f}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;line-height:1.55;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:1.25rem 1rem}
+h1{font-size:clamp(1.7rem,6vw,2.6rem);line-height:1.1;letter-spacing:-.025em;font-weight:800;margin:.5rem 0}
+h2{font-size:clamp(1.05rem,3.6vw,1.25rem);letter-spacing:-.01em;font-weight:700;margin:0 0 .75rem}
+.top{background:var(--card);border-bottom:1px solid var(--line)}
+.top::before{content:"";display:block;height:4px;background:linear-gradient(90deg,#fcd116 0 50%,#003893 50% 75%,#ce1126 75%)}
+.top .wrap{padding-top:.75rem;padding-bottom:.75rem}
+@media(min-width:560px){.top{position:sticky;top:0;z-index:10}}
+.marca{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.01em;font-size:1.05rem;color:var(--text);text-decoration:none}
+.logo{width:26px;height:26px;border-radius:8px;flex:none;background:linear-gradient(#fcd116 0 50%,#003893 50% 75%,#ce1126 75%)}
+nav{display:flex;gap:.5rem;overflow-x:auto;margin-top:.65rem;padding-bottom:.2rem;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav a{white-space:nowrap;padding:.5rem .95rem;border:1px solid var(--line);border-radius:999px;color:var(--text);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;font-weight:600}
+nav a[aria-current=page]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.1rem;margin-top:1rem;box-shadow:var(--shadow)}
+.muted{color:var(--muted);font-size:.92rem;margin:0}
+.nota{margin-top:.75rem}
+.sube{color:var(--up)}
+.baja{color:var(--down)}
+.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));border:0;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:rgba(252,209,22,.22)}
+.hero>*{position:relative;z-index:1}
+.hero .muted{color:rgba(255,255,255,.82)}
+.hero .valor{color:#fff;letter-spacing:-.03em}
+.hero .cambio{display:inline-block;margin-top:.5rem;padding:.25rem .7rem;border-radius:999px;background:rgba(255,255,255,.16);color:#fff;font-size:.92rem}
+.conv{display:grid;gap:.75rem}
+@media(min-width:560px){.conv{grid-template-columns:1fr 1fr}}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:.25rem;font-weight:600}
+input,select{width:100%;font-size:1.2rem;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);min-height:48px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+input:focus-visible,select:focus-visible{border-radius:12px}
+.eyebrow{display:inline-block;margin:0;padding:.25rem .7rem;border-radius:999px;background:var(--tint);color:var(--accent);font-weight:700;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+.lead{font-size:1.05rem;color:var(--muted);margin:.25rem 0 0;max-width:52ch}
+.resalta{background:linear-gradient(transparent 62%,var(--hl) 62% 92%,transparent 92%);padding:0 .1em}
+.hero-home{padding:1rem 0 .25rem}
+.grid{display:grid;gap:1rem;margin-top:1rem}
+@media(min-width:560px){.grid{grid-template-columns:1fr 1fr}}
+.grid .card{margin-top:0}
+.tool{display:flex;flex-direction:column}
+.tool h2{margin:.7rem 0 .25rem}
+.ico{width:44px;height:44px;border-radius:12px;background:var(--tint);color:var(--accent);display:grid;place-items:center}
+.ico svg{width:24px;height:24px}
+.badge{display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem;margin-top:.9rem;padding-top:.8rem;border-top:1px dashed var(--line)}
+.badge strong{font-size:1.5rem;letter-spacing:-.02em}
+.chip{font-size:.8rem;font-weight:700;padding:.1rem .55rem;border-radius:999px;background:var(--tint)}
+.enlace{color:inherit;text-decoration:none;transition:transform .15s ease,border-color .15s ease}
+.enlace:hover{border-color:var(--accent);transform:translateY(-2px)}
+.soon{opacity:.7;border-style:dashed;box-shadow:none}
+.tag{align-self:flex-start;margin-top:.8rem;font-size:.75rem;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.1rem .6rem}
+@media(prefers-reduced-motion:reduce){.enlace{transition:none}.enlace:hover{transform:none}}
+.pie{margin:2rem 0 1rem;padding-top:1rem;border-top:1px solid var(--line)}
+
+
+.notas-page {
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.notas-form {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 18px;
+}
+
+.notas-page label {
+    display: block;
+    margin: 12px 0 7px;
+    font-weight: 600;
+}
+
+.notas-page input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    color: #172033;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font: inherit;
+}
+
+.notas-cortes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.notas-corte {
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 12px;
+}
+
+.notas-corte h2 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.notas-boton,
+.notas-limpiar {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    margin-top: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.notas-boton {
+    color: white;
+    background: #2563eb;
+    border: 1px solid #2563eb;
+}
+
+.notas-limpiar {
+    color: #374151;
+    background: white;
+    border: 1px solid #d1d5db;
+}
+
+.notas-ayuda,
+.notas-pie {
+    color: #6b7280;
+    font-size: .92rem;
+    line-height: 1.6;
+}
+
+/* Fondo oscuro detrás de la ventana emergente */
+.notas-modal-fondo {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.notas-modal-fondo[hidden] {
+    display: none;
+}
+
+/* Ventana emergente compacta */
+.notas-modal {
+    position: relative;
+    width: 100%;
+    max-width: 370px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 28px 22px 22px;
+    border: 1px solid var(--border, #374151);
+    border-radius: 18px;
+    background: var(--card, #151a22);
+    color: var(--text, #f3f4f6);
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    animation: notas-aparecer .2s ease-out;
+}
+
+.notas-cerrar {
+    position: absolute;
+    top: 7px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 27px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.notas-cerrar:hover {
+    background: rgba(127, 127, 127, .15);
+}
+
+.notas-modal-titulo {
+    margin: 8px 18px 12px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.notas-modal .notas-numero {
+    margin: 8px 0;
+    font-size: clamp(42px, 12vw, 58px);
+    line-height: 1.2;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.notas-modal-detalle {
+    margin: 12px 0 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted, #a1a1aa);
+}
+
+.notas-modal .notas-boton {
+    margin-top: 0;
+}
+
+@keyframes notas-aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .notas-cortes {
+        grid-template-columns: 1fr;
+    }
+
+    .notas-form {
+        padding: 16px;
+    }
+
+    .notas-modal {
+        max-width: 340px;
+        padding: 26px 18px 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .notas-modal {
+        animation: none;
+    }
+}
+
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+<a class="marca" href="../"><span class="logo" aria-hidden="true"></span>Utilidades Colombia</a>
+<nav><a href="../">Inicio</a><a href="../dolar/">Dólar hoy</a><a href="../notas/" aria-current="page">Calculadora de notas</a></nav>
+</div></div>
+<div class="wrap">
+<main>
+
+<section class="notas-page">
+    <p class="eyebrow">Herramienta académica</p>
+    <h1>Calculadora de notas</h1>
+    <p class="lead">
+        Descubre cuánto necesitas sacar en el tercer corte
+        para aprobar tu materia.
+    </p>
+
+    <form id="form-notas" class="notas-form">
+        <div class="notas-cortes">
+            <div class="notas-corte">
+                <h2>Primer corte</h2>
+
+                <label for="nota1">Nota obtenida</label>
+                <input
+                    id="nota1"
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.01"
+                    placeholder="Ej. 3.5"
+                    required
+                >
+
+                <label for="porcentaje1">Porcentaje (%)</label>
+                <input
+                    id="porcentaje1"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    placeholder="Ej. 30"
+                    required
+                >
+            </div>
+
+            <div class="notas-corte">
+                <div>
+                    <h2>Segundo corte</h2>
+
+                    <label for="nota2">Nota obtenida</label>
+                    <input
+                        id="nota2"
+                        type="number"
+                        min="0"
+                        max="5"
+                        step="0.01"
+                        placeholder="Ej. 2.8"
+                        required
+                    >
+
+                    <label for="porcentaje2">Porcentaje (%)</label>
+                    <input
+                        id="porcentaje2"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        placeholder="Ej. 30"
+                        required
+                    >
+                </div>
+            </div>
+        </div>
+
+        <p id="suma-porcentajes" class="notas-ayuda">
+            El porcentaje del tercer corte se calculará automáticamente.
+        </p>
+
+        <button class="notas-boton" type="submit">
+            Calcular nota necesaria
+        </button>
+
+        <button class="notas-limpiar" type="reset">
+            Limpiar campos
+        </button>
+    </form>
+
+    <p class="notas-pie">
+        El cálculo utiliza el promedio ponderado de los tres cortes.
+        Verifica las reglas de aproximación y las condiciones
+        de aprobación de tu institución.
+    </p>
+</section>
+
+<div id="resultado-notas" class="notas-modal-fondo" hidden>
+    <div
+        class="notas-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="estado-notas"
+        aria-describedby="detalle-notas"
+    >
+        <button
+            type="button"
+            id="cerrar-notas"
+            class="notas-cerrar"
+            aria-label="Cerrar"
+        >&times;</button>
+
+        <p id="estado-notas" class="notas-modal-titulo"></p>
+
+        <div class="notas-numero" id="nota-necesaria">—</div>
+
+        <p id="detalle-notas" class="notas-modal-detalle"></p>
+
+        <button type="button" id="aceptar-notas" class="notas-boton">
+            Entendido
+        </button>
+    </div>
+</div>
+
+</main>
+<footer class="pie muted">Información con fines informativos. Actualizado: 2026-10-23 04:35 UTC.</footer>
+</div>
+<script>
+
+(() => {
+    const form = document.getElementById("form-notas");
+    if (!form) return;
+
+    const resultado = document.getElementById("resultado-notas");
+    const estado = document.getElementById("estado-notas");
+    const numero = document.getElementById("nota-necesaria");
+    const detalle = document.getElementById("detalle-notas");
+    const sumaTexto = document.getElementById("suma-porcentajes");
+
+    const cerrarNotas = document.getElementById("cerrar-notas");
+    const aceptarNotas = document.getElementById("aceptar-notas");
+
+    const valor = id =>
+        Number(document.getElementById(id).value);
+
+    let elementoAnterior = null;
+
+    function abrirModal() {
+        elementoAnterior = document.activeElement;
+        resultado.hidden = false;
+        aceptarNotas.focus();
+    }
+
+    function cerrarModal() {
+        resultado.hidden = true;
+
+        if (elementoAnterior && elementoAnterior.focus) {
+            elementoAnterior.focus();
+        }
+    }
+
+    cerrarNotas.addEventListener("click", cerrarModal);
+    aceptarNotas.addEventListener("click", cerrarModal);
+
+    resultado.addEventListener("click", event => {
+        if (event.target === resultado) {
+            cerrarModal();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !resultado.hidden) {
+            cerrarModal();
+        }
+    });
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        if (!form.reportValidity()) return;
+
+        const minima = 3.0;
+        const nota1 = valor("nota1");
+        const nota2 = valor("nota2");
+        const p1 = valor("porcentaje1");
+        const p2 = valor("porcentaje2");
+
+        // Calcular automáticamente el porcentaje restante.
+        const p3 = 100 - p1 - p2;
+
+        if (p1 + p2 >= 100) {
+            sumaTexto.textContent =
+                "Los porcentajes del primer y segundo corte " +
+                "deben sumar menos del 100%.";
+
+            return;
+        }
+
+        if (p1 + p2 < 0 || p3 <= 0) {
+            sumaTexto.textContent =
+                "Ingresa porcentajes válidos para los dos primeros cortes.";
+
+            return;
+        }
+
+        sumaTexto.textContent =
+            `Porcentaje del tercer corte: ${p3.toFixed(2)}%`;
+
+        const aporte1 = nota1 * p1 / 100;
+        const aporte2 = nota2 * p2 / 100;
+
+        const necesaria =
+            (minima - aporte1 - aporte2) / (p3 / 100);
+
+        if (necesaria <= 0) {
+            estado.textContent = "¡Ya alcanzaste la meta!";
+            numero.textContent = "0.00";
+
+            detalle.textContent =
+                "Ya alcanzas matemáticamente la nota mínima para aprobar. " +
+                "No te descuides y verifica si tu institución exige " +
+                "una nota mínima obligatoria en el tercer corte.";
+
+        } else if (necesaria > 5) {
+            estado.textContent = "¡Atención!";
+            numero.textContent = necesaria.toFixed(2);
+
+            detalle.textContent =
+                "La nota necesaria supera el máximo de 5.0. " +
+                "Consulta con tu docente qué opciones tienes.";
+
+        } else if (necesaria < 3) {
+            estado.textContent = "¡No te preocupes!";
+            numero.textContent = necesaria.toFixed(2);
+
+            detalle.textContent =
+                "Necesitas menos de 3.0 en el tercer corte para pasar. " +
+                "Pero no te descuides: sigue esforzándote y apunta " +
+                "a sacar una buena nota.";
+
+        } else {
+            estado.textContent = "Esta es tu meta para pasar";
+            numero.textContent = necesaria.toFixed(2);
+
+            detalle.textContent =
+                "Esta es la nota que necesitas en el tercer corte " +
+                "para alcanzar tu objetivo. ¡Prepárate y da lo mejor!";
+        }
+
+        abrirModal();
+    });
+
+    form.addEventListener("reset", () => {
+        resultado.hidden = true;
+
+        sumaTexto.textContent =
+            "El porcentaje del tercer corte se calculará automáticamente.";
+    });
+})();
+
+</script>
+</body>
+</html>
