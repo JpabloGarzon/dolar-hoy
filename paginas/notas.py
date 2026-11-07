@@ -1,14 +1,13 @@
-
 SLUG = "notas"
 NAV = "Calculadora de notas"
-RESUMEN = "Calcula cuánto necesitas en el tercer corte para aprobar."
+RESUMEN = "Calcula cuánto necesitas sacar en lo que te falta para aprobar tu materia."
 
 
 def generar():
     titulo = "Calculadora de notas"
     descripcion = (
-        "Calcula la nota que necesitas en el último corte "
-        "para aprobar tu materia."
+        "Calcula la nota que necesitas para aprobar tu materia. "
+        "Agrega tus notas y porcentajes y elige la escala de tu país."
     )
 
     cuerpo = """
@@ -16,84 +15,59 @@ def generar():
     <p class="eyebrow">Herramienta académica</p>
     <h1>Calculadora de notas</h1>
     <p class="lead">
-        Descubre cuánto necesitas sacar en el tercer corte
-        para aprobar tu materia.
+        Agrega las notas que ya tienes y descubre cuánto necesitas
+        sacar en lo que te falta para aprobar tu materia.
     </p>
 
     <form id="form-notas" class="notas-form">
-        <div class="notas-cortes">
-            <div class="notas-corte">
-                <h2>Primer corte</h2>
+        <h2 class="notas-titulo">1. Tu escala de notas</h2>
 
-                <label for="nota1">Nota obtenida</label>
-                <input
-                    id="nota1"
-                    type="number"
-                    min="0"
-                    max="5"
-                    step="0.01"
-                    placeholder="Ej. 3.5"
-                    required
-                >
+        <label for="escala">País</label>
+        <select id="escala"></select>
 
-                <label for="porcentaje1">Porcentaje (%)</label>
-                <input
-                    id="porcentaje1"
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    placeholder="Ej. 30"
-                    required
-                >
+        <div class="notas-escala">
+            <div>
+                <label for="esc-min">Mínima</label>
+                <input id="esc-min" type="number" step="any" required>
             </div>
-
-            <div class="notas-corte">
-                <div>
-                    <h2>Segundo corte</h2>
-
-                    <label for="nota2">Nota obtenida</label>
-                    <input
-                        id="nota2"
-                        type="number"
-                        min="0"
-                        max="5"
-                        step="0.01"
-                        placeholder="Ej. 2.8"
-                        required
-                    >
-
-                    <label for="porcentaje2">Porcentaje (%)</label>
-                    <input
-                        id="porcentaje2"
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        placeholder="Ej. 30"
-                        required
-                    >
-                </div>
+            <div>
+                <label for="esc-max">Máxima</label>
+                <input id="esc-max" type="number" step="any" required>
+            </div>
+            <div>
+                <label for="esc-aprueba">Aprueba con</label>
+                <input id="esc-aprueba" type="number" step="any" required>
             </div>
         </div>
 
-        <p id="suma-porcentajes" class="notas-ayuda">
-            El porcentaje del tercer corte se calculará automáticamente.
+        <p class="notas-ayuda">
+            Son valores habituales de cada país. Tu institución puede
+            usar otros: cámbialos si es tu caso.
         </p>
+
+        <h2 class="notas-titulo">2. Tus notas actuales</h2>
+
+        <div id="lista-notas" class="notas-lista"></div>
+
+        <button type="button" id="agregar-nota" class="notas-agregar">
+            + Agregar nota
+        </button>
+
+        <p id="suma-porcentajes" class="notas-ayuda" aria-live="polite"></p>
 
         <button class="notas-boton" type="submit">
             Calcular nota necesaria
         </button>
 
-        <button class="notas-limpiar" type="reset">
-            Limpiar campos
+        <button class="notas-limpiar" type="button" id="limpiar-notas">
+            Limpiar notas
         </button>
     </form>
 
     <p class="notas-pie">
-        El cálculo utiliza el promedio ponderado de los tres cortes.
-        Verifica las reglas de aproximación y las condiciones
-        de aprobación de tu institución.
+        El cálculo utiliza el promedio ponderado: cada nota se multiplica
+        por su porcentaje. Verifica las reglas de aproximación y las
+        condiciones de aprobación de tu institución.
     </p>
 </section>
 
@@ -139,13 +113,23 @@ def generar():
     border-radius: 18px;
 }
 
+.notas-titulo {
+    margin: 24px 0 4px;
+    font-size: 1.05rem;
+}
+
+.notas-titulo:first-child {
+    margin-top: 0;
+}
+
 .notas-page label {
     display: block;
     margin: 12px 0 7px;
     font-weight: 600;
 }
 
-.notas-page input {
+.notas-page input,
+.notas-page select {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -157,10 +141,16 @@ def generar():
     font: inherit;
 }
 
-.notas-cortes {
+.notas-escala {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.notas-lista {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
 }
 
 .notas-corte {
@@ -170,9 +160,49 @@ def generar():
     border-radius: 12px;
 }
 
-.notas-corte h2 {
-    margin: 0;
-    font-size: 1.05rem;
+.notas-fila-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notas-campos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.notas-quitar {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.notas-quitar:disabled,
+.notas-agregar:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.notas-agregar {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-top: 12px;
+    border: 2px dashed #2563eb;
+    border-radius: 10px;
+    background: transparent;
+    color: #2563eb;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
 }
 
 .notas-boton,
@@ -299,10 +329,6 @@ def generar():
 }
 
 @media (max-width: 600px) {
-    .notas-cortes {
-        grid-template-columns: 1fr;
-    }
-
     .notas-form {
         padding: 16px;
     }
@@ -325,19 +351,51 @@ def generar():
     const form = document.getElementById("form-notas");
     if (!form) return;
 
-    const resultado = document.getElementById("resultado-notas");
-    const estado = document.getElementById("estado-notas");
-    const numero = document.getElementById("nota-necesaria");
-    const detalle = document.getElementById("detalle-notas");
-    const sumaTexto = document.getElementById("suma-porcentajes");
+    // Escalas habituales por país. Para agregar o corregir un país,
+    // editar solo esta tabla. Cada institución puede usar otros valores,
+    // por eso la persona puede cambiarlos en pantalla.
+    const ESCALAS = {
+        colombia:  { nombre: "Colombia",  min: 0, max: 5,  aprueba: 3 },
+        mexico:    { nombre: "México",    min: 0, max: 10, aprueba: 6 },
+        chile:     { nombre: "Chile",     min: 1, max: 7,  aprueba: 4 },
+        peru:      { nombre: "Perú",      min: 0, max: 20, aprueba: 11 },
+        ecuador:   { nombre: "Ecuador",   min: 0, max: 10, aprueba: 7 },
+        argentina: { nombre: "Argentina", min: 0, max: 10, aprueba: 4 },
+        venezuela: { nombre: "Venezuela", min: 0, max: 20, aprueba: 10 },
+        otra:      { nombre: "Otra (personalizada)" }
+    };
 
-    const cerrarNotas = document.getElementById("cerrar-notas");
-    const aceptarNotas = document.getElementById("aceptar-notas");
+    const ESCALA_INICIAL = "colombia";
+    const MAX_FILAS = 12;
+    const MIN_FILAS = 1;
 
-    const valor = id =>
-        Number(document.getElementById(id).value);
+    const formato = new Intl.NumberFormat("es-CO", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    const fmt = n => formato.format(n);
+    const porId = id => document.getElementById(id);
 
+    const selEscala = porId("escala");
+    const inMin = porId("esc-min");
+    const inMax = porId("esc-max");
+    const inAprueba = porId("esc-aprueba");
+    const lista = porId("lista-notas");
+    const botonAgregar = porId("agregar-nota");
+    const botonLimpiar = porId("limpiar-notas");
+    const sumaTexto = porId("suma-porcentajes");
+
+    const resultado = porId("resultado-notas");
+    const estado = porId("estado-notas");
+    const numero = porId("nota-necesaria");
+    const detalle = porId("detalle-notas");
+    const cerrarNotas = porId("cerrar-notas");
+    const aceptarNotas = porId("aceptar-notas");
+
+    let contador = 0;
     let elementoAnterior = null;
+
+    // ---------- Ventana emergente ----------
 
     function abrirModal() {
         elementoAnterior = document.activeElement;
@@ -368,88 +426,310 @@ def generar():
         }
     });
 
+    // ---------- Escala ----------
+
+    Object.keys(ESCALAS).forEach(clave => {
+        const e = ESCALAS[clave];
+        const opcion = document.createElement("option");
+        opcion.value = clave;
+        opcion.textContent = e.min === undefined
+            ? e.nombre
+            : e.nombre + " (" + e.min + " a " + e.max + ")";
+        selEscala.appendChild(opcion);
+    });
+
+    function leerEscala() {
+        if (inMin.value === "" || inMax.value === "" || inAprueba.value === "") {
+            return null;
+        }
+
+        const min = Number(inMin.value);
+        const max = Number(inMax.value);
+        const aprueba = Number(inAprueba.value);
+
+        if (!isFinite(min) || !isFinite(max) || !isFinite(aprueba)) return null;
+        if (min >= max || aprueba <= min || aprueba > max) return null;
+
+        return { min: min, max: max, aprueba: aprueba };
+    }
+
+    function aplicarLimites() {
+        const esc = leerEscala();
+
+        lista.querySelectorAll(".nota-in").forEach(input => {
+            if (esc) {
+                input.min = esc.min;
+                input.max = esc.max;
+                input.placeholder = esc.min + " a " + esc.max;
+            } else {
+                input.removeAttribute("min");
+                input.removeAttribute("max");
+                input.placeholder = "";
+            }
+        });
+    }
+
+    selEscala.addEventListener("change", () => {
+        const e = ESCALAS[selEscala.value];
+
+        if (e && e.min !== undefined) {
+            inMin.value = e.min;
+            inMax.value = e.max;
+            inAprueba.value = e.aprueba;
+        }
+
+        aplicarLimites();
+    });
+
+    [inMin, inMax, inAprueba].forEach(input => {
+        input.addEventListener("input", () => {
+            selEscala.value = "otra";
+            aplicarLimites();
+        });
+    });
+
+    // ---------- Filas de notas ----------
+
+    function sumaPorcentajes() {
+        let total = 0;
+
+        lista.querySelectorAll(".pct-in").forEach(input => {
+            const v = Number(input.value);
+            if (input.value !== "" && isFinite(v)) total += v;
+        });
+
+        return Math.round(total * 100) / 100;
+    }
+
+    function actualizarRestante() {
+        const restante = Math.round((100 - sumaPorcentajes()) * 100) / 100;
+
+        if (restante < 0) {
+            sumaTexto.textContent =
+                "Los porcentajes suman más de 100%. Revísalos.";
+        } else if (restante === 0) {
+            sumaTexto.textContent =
+                "Los porcentajes suman 100%: ya no queda nada por evaluar.";
+        } else {
+            sumaTexto.textContent =
+                "Porcentaje que te falta por evaluar: " + fmt(restante) + "%";
+        }
+    }
+
+    function actualizarFilas() {
+        const filas = Array.from(lista.children);
+
+        filas.forEach((fila, i) => {
+            fila.querySelector(".notas-fila-titulo").textContent =
+                "Nota " + (i + 1);
+            fila.querySelector(".notas-quitar").disabled =
+                filas.length <= MIN_FILAS;
+        });
+
+        botonAgregar.disabled = filas.length >= MAX_FILAS;
+
+        aplicarLimites();
+        actualizarRestante();
+    }
+
+    function crearCampo(etiqueta, clase) {
+        const caja = document.createElement("div");
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        const id = "campo-" + (++contador);
+
+        label.htmlFor = id;
+        label.textContent = etiqueta;
+
+        input.id = id;
+        input.type = "number";
+        input.step = "any";
+        input.required = true;
+        input.className = clase;
+        input.inputMode = "decimal";
+
+        caja.appendChild(label);
+        caja.appendChild(input);
+
+        return { caja: caja, input: input };
+    }
+
+    function agregarFila() {
+        if (lista.children.length >= MAX_FILAS) return null;
+
+        const fila = document.createElement("div");
+        fila.className = "notas-corte";
+
+        const cabecera = document.createElement("div");
+        cabecera.className = "notas-fila-cabecera";
+
+        const titulo = document.createElement("strong");
+        titulo.className = "notas-fila-titulo";
+
+        const quitar = document.createElement("button");
+        quitar.type = "button";
+        quitar.className = "notas-quitar";
+        quitar.textContent = "×";
+        quitar.setAttribute("aria-label", "Quitar esta nota");
+        quitar.addEventListener("click", () => {
+            if (lista.children.length <= MIN_FILAS) return;
+            fila.remove();
+            actualizarFilas();
+        });
+
+        cabecera.appendChild(titulo);
+        cabecera.appendChild(quitar);
+
+        const campos = document.createElement("div");
+        campos.className = "notas-campos";
+
+        const nota = crearCampo("Nota obtenida", "nota-in");
+        const pct = crearCampo("Porcentaje (%)", "pct-in");
+        pct.input.min = "0";
+        pct.input.max = "100";
+        pct.input.placeholder = "Ej. 30";
+
+        campos.appendChild(nota.caja);
+        campos.appendChild(pct.caja);
+
+        fila.appendChild(cabecera);
+        fila.appendChild(campos);
+        lista.appendChild(fila);
+
+        actualizarFilas();
+
+        return fila;
+    }
+
+    lista.addEventListener("input", actualizarRestante);
+
+    botonAgregar.addEventListener("click", () => {
+        const fila = agregarFila();
+        if (fila) fila.querySelector(".nota-in").focus();
+    });
+
+    botonLimpiar.addEventListener("click", () => {
+        lista.textContent = "";
+        agregarFila();
+        agregarFila();
+        resultado.hidden = true;
+    });
+
+    // ---------- Cálculo ----------
+
     form.addEventListener("submit", event => {
         event.preventDefault();
 
         if (!form.reportValidity()) return;
 
-        const minima = 3.0;
-        const nota1 = valor("nota1");
-        const nota2 = valor("nota2");
-        const p1 = valor("porcentaje1");
-        const p2 = valor("porcentaje2");
+        const esc = leerEscala();
 
-        // Calcular automáticamente el porcentaje restante.
-        const p3 = 100 - p1 - p2;
-
-        if (p1 + p2 >= 100) {
+        if (!esc) {
             sumaTexto.textContent =
-                "Los porcentajes del primer y segundo corte " +
-                "deben sumar menos del 100%.";
-
+                "Revisa la escala: la mínima debe ser menor que la máxima " +
+                "y la nota para aprobar debe estar entre ambas.";
             return;
         }
 
-        if (p1 + p2 < 0 || p3 <= 0) {
-            sumaTexto.textContent =
-                "Ingresa porcentajes válidos para los dos primeros cortes.";
+        let acumulado = 0;
+        let usado = 0;
 
+        lista.querySelectorAll(".notas-corte").forEach(fila => {
+            const nota = Number(fila.querySelector(".nota-in").value);
+            const pct = Number(fila.querySelector(".pct-in").value);
+
+            acumulado += nota * pct / 100;
+            usado += pct;
+        });
+
+        const restante = Math.round((100 - usado) * 100) / 100;
+
+        if (restante < 0) {
+            sumaTexto.textContent =
+                "Los porcentajes suman más de 100%. Revísalos.";
             return;
         }
 
-        sumaTexto.textContent =
-            `Porcentaje del tercer corte: ${p3.toFixed(2)}%`;
+        // Si ya no queda nada por evaluar, se muestra la nota final.
+        if (restante === 0) {
+            const pasa = acumulado >= esc.aprueba - 1e-9;
+            const casi = !pasa && fmt(acumulado) === fmt(esc.aprueba);
 
-        const aporte1 = nota1 * p1 / 100;
-        const aporte2 = nota2 * p2 / 100;
+            estado.textContent = "Tu nota final";
+            numero.textContent = fmt(acumulado);
 
-        const necesaria =
-            (minima - aporte1 - aporte2) / (p3 / 100);
+            if (pasa) {
+                detalle.textContent =
+                    "¡Aprobaste! Superaste la nota mínima de " +
+                    fmt(esc.aprueba) + ".";
+            } else if (casi) {
+                detalle.textContent =
+                    "Te quedaste a muy poco de la nota mínima de " +
+                    fmt(esc.aprueba) + ". Consulta si tu institución " +
+                    "aproxima la nota.";
+            } else {
+                detalle.textContent =
+                    "No alcanzaste la nota mínima de " + fmt(esc.aprueba) +
+                    ". Consulta con tu docente qué opciones tienes.";
+            }
 
-        if (necesaria <= 0) {
+            abrirModal();
+            return;
+        }
+
+        const necesaria = (esc.aprueba - acumulado) / (restante / 100);
+
+        // Se redondea hacia arriba para no quedarse corto por una centésima.
+        const redondeada = Math.ceil(necesaria * 100 - 1e-9) / 100;
+        const sobre = "el " + fmt(restante) + "% que te falta";
+
+        if (redondeada <= esc.min) {
             estado.textContent = "¡Ya alcanzaste la meta!";
-            numero.textContent = "0.00";
+            numero.textContent = "✓";
 
             detalle.textContent =
-                "Ya alcanzas matemáticamente la nota mínima para aprobar. " +
+                "Con lo que llevas ya alcanzas la nota mínima para aprobar. " +
                 "No te descuides y verifica si tu institución exige " +
-                "una nota mínima obligatoria en el tercer corte.";
+                "una nota mínima en lo que falta.";
 
-        } else if (necesaria > 5) {
+        } else if (redondeada > esc.max) {
             estado.textContent = "¡Atención!";
-            numero.textContent = necesaria.toFixed(2);
+            numero.textContent = fmt(redondeada);
 
             detalle.textContent =
-                "La nota necesaria supera el máximo de 5.0. " +
+                "La nota que necesitas en " + sobre +
+                " supera el máximo de " + fmt(esc.max) + ". " +
                 "Consulta con tu docente qué opciones tienes.";
 
-        } else if (necesaria < 3) {
+        } else if (redondeada < esc.aprueba) {
             estado.textContent = "¡No te preocupes!";
-            numero.textContent = necesaria.toFixed(2);
+            numero.textContent = fmt(redondeada);
 
             detalle.textContent =
-                "Necesitas menos de 3.0 en el tercer corte para pasar. " +
+                "Necesitas menos de " + fmt(esc.aprueba) +
+                " como promedio en " + sobre + " para pasar. " +
                 "Pero no te descuides: sigue esforzándote y apunta " +
                 "a sacar una buena nota.";
 
         } else {
             estado.textContent = "Esta es tu meta para pasar";
-            numero.textContent = necesaria.toFixed(2);
+            numero.textContent = fmt(redondeada);
 
             detalle.textContent =
-                "Esta es la nota que necesitas en el tercer corte " +
-                "para alcanzar tu objetivo. ¡Prepárate y da lo mejor!";
+                "Esta es la nota promedio que necesitas en " + sobre +
+                " para aprobar. ¡Prepárate y da lo mejor!";
         }
 
         abrirModal();
     });
 
-    form.addEventListener("reset", () => {
-        resultado.hidden = true;
+    // ---------- Inicio ----------
 
-        sumaTexto.textContent =
-            "El porcentaje del tercer corte se calculará automáticamente.";
-    });
+    selEscala.value = ESCALA_INICIAL;
+    selEscala.dispatchEvent(new Event("change"));
+
+    agregarFila();
+    agregarFila();
 })();
 """
 
